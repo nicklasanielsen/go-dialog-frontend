@@ -9,7 +9,7 @@ node_js: node
 cache: npm
 
 addons:
-  ssh_known_hosts: $REMOTE_HOST
+  ssh_known_hosts: 165.22.87.194
 
 script:
   - cd ./application
@@ -27,6 +27,6 @@ before_deploy:
 deploy:
   provider: script
   skip-cleanup: true
-  script: scp -r ./application/build/* $REMOTE_USER@$REMOTE_HOST:/var/www/$REMOTE_LOCATION
+  script: scp -r ./application/build/* $REMOTE_USER@165.22.87.194:/var/www/$REMOTE_LOCATION
   on:
     branch: master
