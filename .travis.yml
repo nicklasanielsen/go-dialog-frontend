@@ -9,7 +9,7 @@ node_js: node
 cache: npm
 
 addons:
-  ssh_known_hosts: @REMOTE_HOST
+  ssh_known_hosts: $REMOTE_HOST
 
 script:
   - cd ./application
