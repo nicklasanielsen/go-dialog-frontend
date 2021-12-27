@@ -5,9 +5,6 @@ import {
   Image,
   NavItem,
   Modal,
-  Button,
-  Form,
-  Col,
   Row,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -15,6 +12,8 @@ import logo from "../images/logo.png";
 import facade from "../Facade";
 import { useState } from "react";
 import { Message, MessageHeader, Segment } from "semantic-ui-react";
+import Login from "./Login";
+import AccountRecovery from "./AccountRecovery";
 
 export default function Header({
   isLoggedIn,
@@ -25,60 +24,34 @@ export default function Header({
   recaptchaRef,
 }) {
   const [show, setShow] = useState(false);
-  const init = { email: "", password: "" };
-  const [credentials, setCredentials] = useState(init);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [currentWindow, setCurrentWindow] = useState("LOGIN");
 
-  const handleClose = () => setShow(false);
+  const changeWindow = () => {
+    setError(null);
+    setMessage(null);
+
+    if (currentWindow === "LOGIN") {
+      setCurrentWindow("FORGOT_PASSWORD");
+    } else {
+      setCurrentWindow("LOGIN");
+    }
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setError(null);
+    setMessage(null);
+    setCurrentWindow("LOGIN");
+  };
   const handleShow = () => setShow(true);
 
   const performLogout = () => {
     setLoggedIn(false);
     facade.logout();
-  };
-
-  const performLogin = (event) => {
-    event.preventDefault();
-    setError(null);
-
-    if (credentials.email === "" || credentials.password === "") {
-      setError("Alle felter skal udfyldes");
-      return;
-    }
-
-    setLoading(true);
-
-    recaptchaRef.current.executeAsync().then((recaptcha) => {
-      facade
-        .login(credentials.email, credentials.password, recaptcha)
-        .then((response) => {
-          /** LOGIN */
-        })
-        .catch((err) => {
-          if (err.status) {
-            err.fullError.then((e) => {
-              setError(e.message);
-            });
-            return;
-          }
-
-          setError("Der opstod en uventet fejl, prøv igen om lidt");
-        })
-        .then(() => {
-          recaptchaRef.current.reset();
-        })
-        .then(() => {
-          setLoading(false);
-        });
-    });
-  };
-
-  const onChange = (event) => {
-    setCredentials({
-      ...credentials,
-      [event.target.id]: event.target.value,
-    });
   };
 
   return (
@@ -154,42 +127,31 @@ export default function Header({
       </Navbar>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header>
-          <Modal.Title>Log Ind</Modal.Title>
+          <Modal.Title>
+            {currentWindow === "LOGIN" ? (
+              <>Log Ind</>
+            ) : (
+              <>Nulstil Adgangskode</>
+            )}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Segment loading={loading}>
             <Container>
-              <Form onChange={onChange}>
-                <Form.Group>
-                  <Form.Label>E-mail</Form.Label>
-                  <Form.Control
-                    type="email"
-                    placeholder="E-mail"
-                    minLength="6"
-                    maxLength="320"
-                    id="email"
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Adgangskode</Form.Label>
-                  <Form.Control
-                    type="password"
-                    placeholder="Adgangskode"
-                    minLength="8"
-                    maxLength="64"
-                    id="password"
-                  />
-                </Form.Group>
-                <Row className="mt-3 mb-3">
-                  <Button
-                    variant="primary"
-                    type="submit"
-                    onClick={performLogin}
-                  >
-                    Log Ind
-                  </Button>
-                </Row>
-              </Form>
+              {currentWindow === "LOGIN" ? (
+                <Login
+                  recaptchaRef={recaptchaRef}
+                  setError={setError}
+                  setLoading={setLoading}
+                />
+              ) : (
+                <AccountRecovery
+                  recaptchaRef={recaptchaRef}
+                  setError={setError}
+                  setMessage={setMessage}
+                  setLoading={setLoading}
+                />
+              )}
               {error && (
                 <Row className="mt-3 mb-3">
                   <Message negative>
@@ -198,10 +160,36 @@ export default function Header({
                   </Message>
                 </Row>
               )}
+              {message && (
+                <Row className="mt-3 mb-3">
+                  <Message positive>
+                    <MessageHeader>Sådan!</MessageHeader>
+                    {message}
+                  </Message>
+                </Row>
+              )}
             </Container>
           </Segment>
         </Modal.Body>
-        <Modal.Footer></Modal.Footer>
+        <Modal.Footer>
+          {currentWindow === "LOGIN" ? (
+            <button
+              type="button"
+              className="link-button"
+              onClick={changeWindow}
+            >
+              Glemt Adgangskode?
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="link-button"
+              onClick={changeWindow}
+            >
+              Har du allerede en konto?
+            </button>
+          )}
+        </Modal.Footer>
       </Modal>
     </>
   );

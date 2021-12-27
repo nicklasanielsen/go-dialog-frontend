@@ -44,6 +44,40 @@ function Facade() {
     authFacade.logout();
   };
 
+  const accountAndCompanyActivation = (
+    userID,
+    activationCode,
+    cvr,
+    name,
+    recaptcha
+  ) => {
+    return authFacade.accountAndCompanyActivation(
+      userID,
+      activationCode,
+      cvr,
+      name,
+      recaptcha
+    );
+  };
+
+  const requestAccountRecovery = (email, recaptcha) => {
+    return authFacade.requestAccountRecovery(email, recaptcha);
+  };
+
+  const processAccountRecovery = (
+    userID,
+    recoveryCode,
+    password,
+    recaptcha
+  ) => {
+    return authFacade.processAccountRecovery(
+      userID,
+      recoveryCode,
+      password,
+      recaptcha
+    );
+  };
+
   return {
     /** Auth related */
     login,
@@ -53,6 +87,9 @@ function Facade() {
     isHR,
     isManager,
     logout,
+    accountAndCompanyActivation,
+    requestAccountRecovery,
+    processAccountRecovery,
   };
 }
 

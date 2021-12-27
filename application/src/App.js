@@ -10,6 +10,8 @@ import NoRoute from "./components/NoRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import facade from "./Facade";
 import { Message } from "semantic-ui-react";
+import AccountActivation from "./components/AccountActivation";
+import ProcessAccountRecovery from "./components/ProcessAccountRecovery";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(facade.isLoggedIn());
@@ -72,6 +74,14 @@ function App() {
             component={Dashboard}
             recaptchaRef={recaptchaRef}
           />
+
+          <Route path="/account-activation/:userID/:activationCode">
+            <AccountActivation recaptchaRef={recaptchaRef} />
+          </Route>
+
+          <Route path="/account-recovery/:userID/:recoveryCode">
+            <ProcessAccountRecovery recaptchaRef={recaptchaRef} />
+          </Route>
 
           <Route>
             <NoRoute />

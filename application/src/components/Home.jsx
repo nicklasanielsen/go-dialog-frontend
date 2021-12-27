@@ -7,7 +7,15 @@ import {
   MessageHeader,
   GridRow,
 } from "semantic-ui-react";
-import { Container, Form, Button, Row, Col, Image } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  Image,
+  Collapse,
+} from "react-bootstrap";
 import facade from "../Facade";
 import logo from "../images/logo.png";
 
@@ -25,6 +33,7 @@ export default function Home({ recaptchaRef }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+  const [open, setOpen] = useState(true);
 
   const performRegistration = (event) => {
     event.preventDefault();
@@ -65,6 +74,7 @@ export default function Home({ recaptchaRef }) {
         )
         .then((response) => {
           setMessage(response.message);
+          setOpen(false);
         })
         .catch((err) => {
           if (err.status) {
@@ -120,116 +130,118 @@ export default function Home({ recaptchaRef }) {
           </Header>
           <Segment attached loading={loading}>
             <Container>
-              <Form onChange={onChange}>
-                <Col>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Fornavn(e)</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Fornavn(e)"
-                        minLength="2"
-                        maxLength="64"
-                        id="firstname"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Mellemnavn(e)</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Mellemnavn(e)"
-                        minLength="2"
-                        maxLength="64"
-                        id="middlename"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Efternavn(e)</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Efternavn(e)"
-                        minLength="2"
-                        maxLength="64"
-                        id="lastname"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>E-mail</Form.Label>
-                      <Form.Control
-                        type="email"
-                        placeholder="E-mail"
-                        minLength="6"
-                        maxLength="320"
-                        id="email"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Adgangskode</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Adgangskode"
-                        minLength="8"
-                        maxLength="64"
-                        id="password"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Bekræft Adgangskode</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Bekræft Adgangskode"
-                        minLength="2"
-                        maxLength="64"
-                        id="verifyPassword"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Check
-                        type="checkbox"
-                        label="Jeg accepterer Vilkår og betingelser"
-                        id="termsAccepted"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      onClick={performRegistration}
-                    >
-                      Register
-                    </Button>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    {error && (
-                      <Message negative>
-                        <MessageHeader>Hovsa..</MessageHeader>
-                        {error}
-                      </Message>
-                    )}
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    {message && (
-                      <Message positive>
-                        <MessageHeader>Sådan!</MessageHeader>
-                        {message}
-                      </Message>
-                    )}
-                  </Row>
-                </Col>
-              </Form>
+              <Collapse in={open}>
+                <Form onChange={onChange}>
+                  <Col>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Fornavn(e)</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Fornavn(e)"
+                          minLength="2"
+                          maxLength="64"
+                          id="firstname"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Mellemnavn(e)</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Mellemnavn(e)"
+                          minLength="2"
+                          maxLength="64"
+                          id="middlename"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Efternavn(e)</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Efternavn(e)"
+                          minLength="2"
+                          maxLength="64"
+                          id="lastname"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>E-mail</Form.Label>
+                        <Form.Control
+                          type="email"
+                          placeholder="E-mail"
+                          minLength="6"
+                          maxLength="320"
+                          id="email"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Adgangskode</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="Adgangskode"
+                          minLength="8"
+                          maxLength="64"
+                          id="password"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Bekræft Adgangskode</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="Bekræft Adgangskode"
+                          minLength="2"
+                          maxLength="64"
+                          id="verifyPassword"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Check
+                          type="checkbox"
+                          label="Jeg accepterer Vilkår og betingelser"
+                          id="termsAccepted"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        onClick={performRegistration}
+                      >
+                        Register
+                      </Button>
+                    </Row>
+                  </Col>
+                </Form>
+              </Collapse>
+              <Row className="mt-3 mb-3">
+                {error && (
+                  <Message negative>
+                    <MessageHeader>Hovsa..</MessageHeader>
+                    {error}
+                  </Message>
+                )}
+              </Row>
+              <Row className="mt-3 mb-3">
+                {message && (
+                  <Message positive>
+                    <MessageHeader>Sådan!</MessageHeader>
+                    {message}
+                  </Message>
+                )}
+              </Row>
             </Container>
           </Segment>
         </Grid.Column>

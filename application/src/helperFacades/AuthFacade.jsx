@@ -1,4 +1,3 @@
-import tokenFacade from "./TokenFacade";
 import apiFacade from "./APIFacade";
 
 function AuthFacade() {
@@ -54,7 +53,62 @@ function AuthFacade() {
     return false;
   };
 
-  return { login, logout, register, isLoggedIn, isAdmin, isHR, isManager };
+  const accountAndCompanyActivation = (
+    userID,
+    activationCode,
+    cvr,
+    name,
+    recaptcha
+  ) => {
+    const body = {
+      userID: userID,
+      activationCode: activationCode,
+      cvr: cvr,
+      name: name,
+    };
+
+    const request = apiFacade.prepareRequest("POST", body, null, recaptcha);
+
+    return apiFacade.submitRequest("/auth/account-activation/company", request);
+  };
+
+  const requestAccountRecovery = (email, recaptcha) => {
+    const body = { email: email };
+
+    const request = apiFacade.prepareRequest("POST", body, null, recaptcha);
+
+    return apiFacade.submitRequest("/auth/account-recovery/request", request);
+  };
+
+  const processAccountRecovery = (
+    userID,
+    recoveryCode,
+    password,
+    recaptcha
+  ) => {
+    const body = {
+      user_id: userID,
+      recovery_code: recoveryCode,
+      password: password,
+    };
+
+    const request = apiFacade.prepareRequest("POST", body, null, recaptcha);
+
+    return apiFacade.submitRequest("/auth/account-recovery/process", request);
+  };
+
+  return {
+    login,
+    logout,
+    register,
+    isLoggedIn,
+    isAdmin,
+    isHR,
+    isManager,
+    accountAndCompanyActivation,
+    requestAccountRecovery,
+    processAccountRecovery,
+  };
 }
 
 const authFacade = AuthFacade();
