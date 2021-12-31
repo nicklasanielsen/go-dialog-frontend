@@ -115,6 +115,9 @@ export default function CreateInterview({ recaptchaRef, user }) {
                     disabled={options === null}
                     id="template"
                   >
+                    <option disabled selected>
+                      Vælg Samtale Skabelon
+                    </option>
                     {options}
                   </Form.Control>
                 </Form.Group>
