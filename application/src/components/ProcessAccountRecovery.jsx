@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Col, Container, Form, Row, Button } from "react-bootstrap";
+import { Col, Container, Form, Row, Button, Collapse } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import {
   Grid,
@@ -17,6 +17,7 @@ export default function ProcessAccountRecovery({ recaptchaRef }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+  const [open, setOpen] = useState(true);
 
   const recoverAccount = (event) => {
     event.preventDefault();
@@ -45,6 +46,7 @@ export default function ProcessAccountRecovery({ recaptchaRef }) {
         )
         .then((response) => {
           setMessage(response.message);
+          setOpen(false);
         })
         .catch((err) => {
           if (err.status) {
@@ -78,59 +80,61 @@ export default function ProcessAccountRecovery({ recaptchaRef }) {
           </Header>
           <Segment attached loading={loading}>
             <Container>
-              <Form onChange={onChange}>
-                <Col>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Ny Adgangskode</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Ny Adgangskode"
-                        minLength="8"
-                        maxLength="64"
-                        id="password"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Bekræft Ny Adgangskode</Form.Label>
-                      <Form.Control
-                        type="password"
-                        placeholder="Bekræft Ny Adgangskode"
-                        minLength="8"
-                        maxLength="64"
-                        id="verifyPassword"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      onClick={recoverAccount}
-                    >
-                      Nulstil adgangskode
-                    </Button>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    {error && (
-                      <Message negative>
-                        <MessageHeader>Hovsa..</MessageHeader>
-                        {error}
-                      </Message>
-                    )}
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    {message && (
-                      <Message positive>
-                        <MessageHeader>Sådan!</MessageHeader>
-                        {message}
-                      </Message>
-                    )}
-                  </Row>
-                </Col>
-              </Form>
+              <Collapse in={open}>
+                <Form onChange={onChange}>
+                  <Col>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Ny Adgangskode</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="Ny Adgangskode"
+                          minLength="8"
+                          maxLength="64"
+                          id="password"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Bekræft Ny Adgangskode</Form.Label>
+                        <Form.Control
+                          type="password"
+                          placeholder="Bekræft Ny Adgangskode"
+                          minLength="8"
+                          maxLength="64"
+                          id="verifyPassword"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        onClick={recoverAccount}
+                      >
+                        Nulstil adgangskode
+                      </Button>
+                    </Row>
+                  </Col>
+                </Form>
+              </Collapse>
+              <Row className="mt-3 mb-3">
+                {error && (
+                  <Message negative>
+                    <MessageHeader>Hovsa..</MessageHeader>
+                    {error}
+                  </Message>
+                )}
+              </Row>
+              <Row className="mt-3 mb-3">
+                {message && (
+                  <Message positive>
+                    <MessageHeader>Sådan!</MessageHeader>
+                    {message}
+                  </Message>
+                )}
+              </Row>
             </Container>
           </Segment>
         </Grid.Column>

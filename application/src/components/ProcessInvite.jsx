@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { useState } from "react";
 import {
   Grid,
@@ -16,10 +17,12 @@ import {
   Image,
   Collapse,
 } from "react-bootstrap";
-import facade from "../Facade";
 import logo from "../images/logo.png";
+import facade from "../Facade";
 
-export default function Home({ recaptchaRef }) {
+export default function ProcessInvite({ recaptchaRef }) {
+  let { companyID } = useParams();
+
   const init = {
     firstname: "",
     middlename: "",
@@ -27,7 +30,6 @@ export default function Home({ recaptchaRef }) {
     email: "",
     password: "",
     verifyPassword: "",
-    termsAccepted: false,
   };
   const [credentials, setCredentials] = useState(init);
   const [loading, setLoading] = useState(false);
@@ -63,12 +65,13 @@ export default function Home({ recaptchaRef }) {
 
     recaptchaRef.current.executeAsync().then((recaptcha) => {
       facade
-        .register(
+        .registerUser(
           credentials.firstname,
           credentials.middlename,
           credentials.lastname,
           credentials.email,
           credentials.password,
+          companyID,
           recaptcha
         )
         .then((response) => {
@@ -95,17 +98,10 @@ export default function Home({ recaptchaRef }) {
   };
 
   const onChange = (event) => {
-    if (event.target.id !== "termsAccepted") {
-      setCredentials({
-        ...credentials,
-        [event.target.id]: event.target.value,
-      });
-    } else {
-      setCredentials({
-        ...credentials,
-        [event.target.id]: !credentials.termsAccepted,
-      });
-    }
+    setCredentials({
+      ...credentials,
+      [event.target.id]: event.target.value,
+    });
   };
 
   return (
@@ -125,7 +121,7 @@ export default function Home({ recaptchaRef }) {
         </Grid.Column>
         <Grid.Column>
           <Header as="h2" attached="top" inverted>
-            Tilmeld dig og din virksomhed for at komme i gang!
+            Person Oplysninger
           </Header>
           <Segment attached loading={loading}>
             <Container>
@@ -205,21 +201,12 @@ export default function Home({ recaptchaRef }) {
                       </Form.Group>
                     </Row>
                     <Row className="mt-3 mb-3">
-                      <Form.Group>
-                        <Form.Check
-                          type="checkbox"
-                          label="Jeg accepterer Vilkår og betingelser"
-                          id="termsAccepted"
-                        />
-                      </Form.Group>
-                    </Row>
-                    <Row className="mt-3 mb-3">
                       <Button
                         variant="primary"
                         type="submit"
                         onClick={performRegistration}
                       >
-                        Register
+                        Opret Profil
                       </Button>
                     </Row>
                   </Col>

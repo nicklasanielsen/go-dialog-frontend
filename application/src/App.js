@@ -12,6 +12,11 @@ import facade from "./Facade";
 import { Message } from "semantic-ui-react";
 import AccountActivation from "./components/AccountActivation";
 import ProcessAccountRecovery from "./components/ProcessAccountRecovery";
+import ProcessAccountActivation from "./components/ProcessAccountActivation";
+import AdminDashboard from "./components/AdminDashboard";
+import HRDashboard from "./components/HRDashboard";
+import ManagerDashboard from "./components/ManagerDashboard";
+import ProcessInvite from "./components/ProcessInvite";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(facade.isLoggedIn());
@@ -25,7 +30,7 @@ function App() {
       if (!currentStatus) {
         setLoggedIn(false);
         facade.logout();
-        history.push("/login");
+        history.push("/");
       }
     }
   }, [isLoggedIn, history]);
@@ -42,7 +47,7 @@ function App() {
     <>
       <ReCAPTCHA
         ref={recaptchaRef}
-        sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" /** TEST KEY */
+        sitekey="6LfbEtgdAAAAAAd-B-VYHlT7LsuKhzWjwr9ttkau"
         size="invisible"
       />
 
@@ -64,8 +69,36 @@ function App() {
 
         <Switch>
           <Route exact path="/">
-            <Home recaptchaRef={recaptchaRef} />
+            {isLoggedIn ? (
+              <>{history.push("/dashboard")}</>
+            ) : (
+              <Home recaptchaRef={recaptchaRef} />
+            )}
           </Route>
+
+          <PrivateRoute
+            path="/dashboard/admin"
+            isLoggedIn={isLoggedIn}
+            isAuthenticated={facade.isAdmin()}
+            component={AdminDashboard}
+            recaptchaRef={recaptchaRef}
+          />
+
+          <PrivateRoute
+            path="/dashboard/hr"
+            isLoggedIn={isLoggedIn}
+            isAuthenticated={facade.isHR()}
+            component={HRDashboard}
+            recaptchaRef={recaptchaRef}
+          />
+
+          <PrivateRoute
+            path="/dashboard/manager"
+            isLoggedIn={isLoggedIn}
+            isAuthenticated={facade.isManager()}
+            component={ManagerDashboard}
+            recaptchaRef={recaptchaRef}
+          />
 
           <PrivateRoute
             path="/dashboard"
@@ -74,6 +107,14 @@ function App() {
             component={Dashboard}
             recaptchaRef={recaptchaRef}
           />
+
+          <Route path="/invite/:companyID">
+            <ProcessInvite recaptchaRef={recaptchaRef} />
+          </Route>
+
+          <Route path="/account-activation/:userID/:activationCode/process">
+            <ProcessAccountActivation />
+          </Route>
 
           <Route path="/account-activation/:userID/:activationCode">
             <AccountActivation recaptchaRef={recaptchaRef} />

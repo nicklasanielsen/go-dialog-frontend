@@ -1,10 +1,18 @@
 import { Button, Form, Row } from "react-bootstrap";
 import { useState } from "react";
 import facade from "../Facade";
+import { useHistory } from "react-router-dom";
 
-export default function Login({ recaptchaRef, setError, setLoading }) {
+export default function Login({
+  recaptchaRef,
+  setError,
+  setLoading,
+  setLoggedIn,
+  setShow,
+}) {
   const init = { email: "", password: "" };
   const [credentials, setCredentials] = useState(init);
+  const history = useHistory();
 
   const performLogin = (event) => {
     event.preventDefault();
@@ -21,7 +29,9 @@ export default function Login({ recaptchaRef, setError, setLoading }) {
       facade
         .login(credentials.email, credentials.password, recaptcha)
         .then(() => {
-          /** LOGIN */
+          setShow(false);
+          setLoggedIn(true);
+          history.push("/dashboard");
         })
         .catch((err) => {
           if (err.status) {

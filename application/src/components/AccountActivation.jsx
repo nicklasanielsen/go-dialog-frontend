@@ -8,7 +8,15 @@ import {
   MessageHeader,
   GridRow,
 } from "semantic-ui-react";
-import { Container, Form, Button, Row, Col, Image } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  Image,
+  Collapse,
+} from "react-bootstrap";
 import logo from "../images/logo.png";
 import facade from "../Facade";
 
@@ -18,6 +26,8 @@ export default function AccountActivation({ recaptchaRef }) {
   const [details, setDetails] = useState(init);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [open, setOpen] = useState(true);
+  const [message, setMessage] = useState(null);
 
   const performRegistration = (event) => {
     event.preventDefault();
@@ -52,7 +62,8 @@ export default function AccountActivation({ recaptchaRef }) {
           recaptcha
         )
         .then((response) => {
-          /** TODO */
+          setMessage(response.message);
+          setOpen(false);
         })
         .catch((err) => {
           if (err.status) {
@@ -101,49 +112,59 @@ export default function AccountActivation({ recaptchaRef }) {
           </Header>
           <Segment attached loading={loading}>
             <Container>
-              <Form onChange={onChange}>
-                <Col>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>Virksomhedsnavn</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Virksomhedsnavn"
-                        id="name"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Form.Group>
-                      <Form.Label>CVR</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="CVR"
-                        minLength="8"
-                        maxLength="8"
-                        id="cvr"
-                      />
-                    </Form.Group>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    <Button
-                      variant="primary"
-                      type="submit"
-                      onClick={performRegistration}
-                    >
-                      Register Virksomhed
-                    </Button>
-                  </Row>
-                  <Row className="mt-3 mb-3">
-                    {error && (
-                      <Message negative>
-                        <MessageHeader>Hovsa..</MessageHeader>
-                        {error}
-                      </Message>
-                    )}
-                  </Row>
-                </Col>
-              </Form>
+              <Collapse in={open}>
+                <Form onChange={onChange}>
+                  <Col>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>Virksomhedsnavn</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Virksomhedsnavn"
+                          id="name"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Form.Group>
+                        <Form.Label>CVR</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="CVR"
+                          minLength="8"
+                          maxLength="8"
+                          id="cvr"
+                        />
+                      </Form.Group>
+                    </Row>
+                    <Row className="mt-3 mb-3">
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        onClick={performRegistration}
+                      >
+                        Register Virksomhed
+                      </Button>
+                    </Row>
+                  </Col>
+                </Form>
+              </Collapse>
+              <Row className="mt-3 mb-3">
+                {error && (
+                  <Message negative>
+                    <MessageHeader>Hovsa..</MessageHeader>
+                    {error}
+                  </Message>
+                )}
+              </Row>
+              <Row className="mt-3 mb-3">
+                {message && (
+                  <Message positive>
+                    <MessageHeader>Sådan!</MessageHeader>
+                    {message}
+                  </Message>
+                )}
+              </Row>
             </Container>
           </Segment>
         </Grid.Column>

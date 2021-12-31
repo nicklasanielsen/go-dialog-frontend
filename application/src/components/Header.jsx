@@ -143,6 +143,8 @@ export default function Header({
                   recaptchaRef={recaptchaRef}
                   setError={setError}
                   setLoading={setLoading}
+                  setLoggedIn={setLoggedIn}
+                  setShow={setShow}
                 />
               ) : (
                 <AccountRecovery

@@ -1,4 +1,5 @@
 import apiFacade from "./APIFacade";
+import tokenFacade from "./TokenFacade";
 
 function AuthFacade() {
   const login = (email, password, recaptcha) => {
@@ -13,7 +14,15 @@ function AuthFacade() {
   };
 
   const logout = () => {
-    return;
+    let token = tokenFacade.getToken();
+
+    if (token !== undefined) {
+      const request = apiFacade.prepareRequest("POST", null, token, null);
+
+      apiFacade.submitRequest("/auth/logout", request);
+    }
+
+    tokenFacade.removeToken();
   };
 
   const register = (
@@ -37,19 +46,77 @@ function AuthFacade() {
     return apiFacade.submitRequest("/auth/register", request);
   };
 
+  const registerUser = (
+    firstname,
+    middlename,
+    lastname,
+    email,
+    password,
+    companyID,
+    recaptcha
+  ) => {
+    const body = {
+      firstname: firstname,
+      middlename: middlename,
+      lastname: lastname,
+      email: email,
+      password: password,
+      company_id: companyID,
+    };
+
+    const request = apiFacade.prepareRequest("POST", body, null, recaptcha);
+
+    return apiFacade.submitRequest("/auth/register/new", request);
+  };
+
+  const renew = () => {
+    let token = tokenFacade.getToken();
+
+    const request = apiFacade.prepareRequest("POST", null, token, null);
+
+    apiFacade.submitRequest("/auth/activity", request);
+  };
+
   const isLoggedIn = () => {
-    return false;
+    let valid = tokenFacade.isValid();
+
+    if (valid) {
+      renew();
+    }
+
+    return valid;
   };
 
   const isAdmin = () => {
+    let decodedToken = tokenFacade.getDecodedToken();
+
+    if (decodedToken) {
+      let roles = decodedToken.roles.split(",");
+      return roles.includes("ADMIN");
+    }
+
     return false;
   };
 
   const isHR = () => {
+    let decodedToken = tokenFacade.getDecodedToken();
+
+    if (decodedToken) {
+      let roles = decodedToken.roles.split(",");
+      return roles.includes("HR");
+    }
+
     return false;
   };
 
   const isManager = () => {
+    let decodedToken = tokenFacade.getDecodedToken();
+
+    if (decodedToken) {
+      let roles = decodedToken.roles.split(",");
+      return roles.includes("MANAGER");
+    }
+
     return false;
   };
 
@@ -61,8 +128,8 @@ function AuthFacade() {
     recaptcha
   ) => {
     const body = {
-      userID: userID,
-      activationCode: activationCode,
+      user_id: userID,
+      activation_code: activationCode,
       cvr: cvr,
       name: name,
     };
@@ -70,6 +137,17 @@ function AuthFacade() {
     const request = apiFacade.prepareRequest("POST", body, null, recaptcha);
 
     return apiFacade.submitRequest("/auth/account-activation/company", request);
+  };
+
+  const accountActivation = (userID, activationCode) => {
+    const body = {
+      user_id: userID,
+      activation_code: activationCode,
+    };
+
+    const request = apiFacade.prepareRequest("POST", body, null, null);
+
+    return apiFacade.submitRequest("/auth/account-activation", request);
   };
 
   const requestAccountRecovery = (email, recaptcha) => {
@@ -89,7 +167,7 @@ function AuthFacade() {
     const body = {
       user_id: userID,
       recovery_code: recoveryCode,
-      password: password,
+      new_password: password,
     };
 
     const request = apiFacade.prepareRequest("POST", body, null, recaptcha);
@@ -101,11 +179,13 @@ function AuthFacade() {
     login,
     logout,
     register,
+    registerUser,
     isLoggedIn,
     isAdmin,
     isHR,
     isManager,
     accountAndCompanyActivation,
+    accountActivation,
     requestAccountRecovery,
     processAccountRecovery,
   };
